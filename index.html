@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HADES DIGITAL</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#050510;
+color:white;
+overflow-x:hidden;
+scroll-behavior:smooth;
+}
+
+/* SCROLL PROGRESS */
+#progressBar{
+position:fixed;
+top:0;
+left:0;
+height:5px;
+background:linear-gradient(90deg,#00f7ff,#ff00ff);
+width:0%;
+z-index:9999;
+}
+
+/* PARTICLE BACKGROUND */
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+/* LOADER */
+#loader{
+position:fixed;
+width:100%;
+height:100%;
+background:#050510;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:9998;
+color:#00f7ff;
+}
+
+.loading-bar{
+width:220px;
+height:8px;
+background:#111;
+border-radius:10px;
+margin-top:15px;
+overflow:hidden;
+box-shadow:0 0 10px #00f7ff;
+}
+
+.progress{
+width:0%;
+height:100%;
+background:linear-gradient(90deg,#00f7ff,#ff00ff);
+animation:load 3s linear forwards;
+}
+
+@keyframes load{
+0%{width:0%;}
+100%{width:100%;}
+}
+
+nav{
+position:sticky;
+top:0;
+background:#111;
+padding:15px;
+text-align:center;
+z-index:1000;
+}
+
+nav a{
+color:#00f7ff;
+margin:0 15px;
+text-decoration:none;
+font-weight:bold;
+}
+
+nav a:hover{
+color:#ff00ff;
+}
+
+.section{
+padding:70px 20px;
+text-align:center;
+opacity:0;
+transform:translateY(40px);
+transition:1s;
+}
+
+.section.show{
+opacity:1;
+transform:translateY(0);
+}
+
+.card{
+background:#111122;
+margin:20px auto;
+padding:25px;
+max-width:500px;
+border-radius:15px;
+box-shadow:0 0 15px #00f7ff33;
+transition:0.4s;
+}
+
+.card:hover{
+transform:scale(1.05);
+box-shadow:0 0 30px #ff00ff;
+}
+
+ul{
+list-style:none;
+padding:0;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:20px;
+background:linear-gradient(90deg,#00f7ff,#ff00ff);
+color:black;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="progressBar"></div>
+<canvas id="bg"></canvas>
+
+<div id="loader">
+<h1>HADES DIGITAL</h1>
+<p>INITIALIZING SYSTEM...</p>
+<div class="loading-bar"><div class="progress"></div></div>
+</div>
+
+<div id="main" style="display:none;">
+
+<nav>
+<a href="#home">Home</a>
+<a href="#services">Services</a>
+</nav>
+
+<section id="home" class="section">
+<h1>⚡ HADES DIGITAL ⚡</h1>
+<p>Cyberpunk Digital Studio</p>
+</section>
+
+<section id="services" class="section">
+<h2>🔥 Our Services 🔥</h2>
+
+<div class="card">
+<h3>🎬 Jasa Edit Video</h3>
+<p>Edit Gaming, Anime, TikTok, Cinematic</p>
+<p style="color:#00f7ff;"><b>Harga:</b></p>
+<ul>
+<li>Basic Edit : 25K</li>
+<li>Pro Edit : 50K</li>
+<li>Cinematic Premium : 100K</li>
+</ul>
+<button onclick="orderWA('Jasa Edit Video')">Order Sekarang</button>
+</div>
+
+<div class="card">
+<h3>🤖 Bot WhatsApp</h3>
+<p>Bot Grup, Store, Auto Respon</p>
+<p style="color:#00f7ff;"><b>Harga:</b></p>
+<ul>
+<li>Bot Grup : 50K</li>
+<li>Bot Store : 75K</li>
+<li>Bot All In One : 120K</li>
+</ul>
+<button onclick="orderWA('Bot WhatsApp')">Pesan Sekarang</button>
+</div>
+
+<div class="card">
+<h3>💎 Top Up Game</h3>
+<p style="color:#00f7ff;"><b>Contoh Harga:</b></p>
+<ul>
+<li>FF 70 DM : 10K</li>
+<li>ML 86 DM : 20K</li>
+<li>Valorant 125 VP : 18K</li>
+</ul>
+
+<input type="text" id="gameId" placeholder="Masukkan ID Game" style="width:90%;padding:10px;border-radius:10px;border:none;">
+<br><br>
+<button onclick="orderTopup()">Top Up Sekarang</button>
+</div>
+
+</section>
+
+</div>
+
+<script>
+setTimeout(()=>{
+document.getElementById("loader").style.display="none";
+document.getElementById("main").style.display="block";
+},3000);
+
+const sections=document.querySelectorAll(".section");
+window.addEventListener("scroll",()=>{
+sections.forEach(sec=>{
+if(sec.getBoundingClientRect().top<window.innerHeight-100){
+sec.classList.add("show");
+}
+});
+});
+
+window.onscroll=function(){
+let winScroll=document.body.scrollTop||document.documentElement.scrollTop;
+let height=document.documentElement.scrollHeight-document.documentElement.clientHeight;
+let scrolled=(winScroll/height)*100;
+document.getElementById("progressBar").style.width=scrolled+"%";
+};
+
+const canvas=document.getElementById("bg");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+for(let i=0;i<60;i++){
+particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:2});
+}
+
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="#00f7ff";
+particles.forEach(p=>{
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+p.y+=0.5;
+if(p.y>canvas.height)p.y=0;
+});
+requestAnimationFrame(draw);
+}
+draw();
+
+const nomorAdmin = "6289512404469";
+
+function orderWA(layanan){
+let pesan = encodeURIComponent(
+`Halo Admin HADES DIGITAL ⚡
+Saya mau order:
+
+Layanan: ${layanan}
+
+Mohon info lebih lanjut ya 😈`
+);
+window.open(`https:/wa.me/6289512404469/${nomorAdmin}?text=${pesan}`,"_blank");
+}
+
+function orderTopup(){
+let gameId=document.getElementById("gameId").value;
+if(!gameId){
+alert("Masukkan ID Game dulu!");
+return;
+}
+let pesan = encodeURIComponent(
+`Halo Admin HADES DIGITAL ⚡
+Saya mau Top Up Game
+
+ID Game: ${gameId}
+
+Mohon diproses ya 😈`
+);
+window.open(`https:/wa.me/6289512404469/${nomorAdmin}?text=${pesan}`,"_blank");
+}
+</script>
+
+</body>
+</html>
